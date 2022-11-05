@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -37,8 +39,14 @@ public class ServerController {
         return ResponseEntity.created(uri).body(response);
     }
 
-    @DeleteMapping
-    @RequestMapping(value = "server/{serverId}")
+    @PutMapping(value = "server/{serverId}")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public ServerDTO update(@PathVariable String serverId, @RequestBody ServerDTO dto) {
+        return serverService.update(serverId, dto);
+    }
+
+    @DeleteMapping(value = "server/{serverId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String serverId) {
         serverService.delete(serverId);

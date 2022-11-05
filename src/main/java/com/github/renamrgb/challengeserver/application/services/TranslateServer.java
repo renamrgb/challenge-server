@@ -32,4 +32,12 @@ public class TranslateServer {
 
         return dto;
     }
+
+    public Server copyDtoToEntity(ServerDTO dto, Server server) {
+        server.setName(dto.getName());
+        server.setPort(dto.getPort());
+        server.setIp(dto.getIp());
+
+        return server;
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
 import static com.github.renamrgb.challengeserver.domain.StandardMessages.*;
@@ -28,6 +29,20 @@ public class ServerService {
         Server server = translateServer.from(dto);
         server = serverRepository.save(server);
         return translateServer.to(server);
+    }
+
+    @Transactional
+    public ServerDTO update(String serverId, ServerDTO dto) {
+        try {
+            UUID uuid = UUID.fromString(serverId);
+            Server referenceById = serverRepository.getReferenceById(uuid);
+            Server entity = translateServer.copyDtoToEntity(dto, referenceById);
+            entity = serverRepository.save(entity);
+
+            return translateServer.to(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotfoundException(RESOURCE_NOT_FOUND);
+        }
     }
 
     public void delete(String serverId) {
