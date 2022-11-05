@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 public class ServerController {
@@ -29,7 +30,7 @@ public class ServerController {
     }
 
     @PostMapping
-    @RequestMapping(value = "server", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "servers", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServerDTO> save(@RequestBody ServerDTO request) {
         ServerDTO response = serverService.create(request);
         URI uri = ServletUriComponentsBuilder
@@ -40,23 +41,30 @@ public class ServerController {
         return ResponseEntity.created(uri).body(response);
     }
 
-    @PutMapping(value = "server/{serverId}")
+    @PutMapping(value = "servers/{serverId}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public ServerDTO update(@PathVariable String serverId, @RequestBody ServerDTO dto) {
         return serverService.update(serverId, dto);
     }
 
-    @DeleteMapping(value = "server/{serverId}")
+    @DeleteMapping(value = "servers/{serverId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String serverId) {
         serverService.delete(serverId);
     }
 
-    @GetMapping(value = "server/{serverId}")
+    @GetMapping(value = "servers/{serverId}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public ServerDTO findById(@PathVariable String serverId) {
         return serverService.findById(serverId);
+    }
+
+    @GetMapping(value = "servers")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public List<ServerDTO> findAll() {
+        return serverService.findAll();
     }
 }

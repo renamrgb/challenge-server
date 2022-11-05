@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.github.renamrgb.challengeserver.domain.StandardMessages.*;
 
@@ -62,5 +64,14 @@ public class ServerService {
         Server entity = optionalServer
                 .orElseThrow(() -> new ResourceNotfoundException(RESOURCE_NOT_FOUND));
         return translateServer.to(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ServerDTO> findAll() {
+        List<Server> serverList = serverRepository.findAll();
+        return serverList
+                .stream()
+                .map(translateServer::to)
+                .collect(Collectors.toList());
     }
 }
