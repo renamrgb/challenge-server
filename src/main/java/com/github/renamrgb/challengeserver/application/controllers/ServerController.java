@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
+@RequestMapping("servers")
 public class ServerController {
 
     private final ServerService serverService;
@@ -30,7 +31,7 @@ public class ServerController {
     }
 
     @PostMapping
-    @RequestMapping(value = "servers", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServerDTO> save(@RequestBody ServerDTO request) {
         ServerDTO response = serverService.create(request);
         URI uri = ServletUriComponentsBuilder
@@ -41,27 +42,27 @@ public class ServerController {
         return ResponseEntity.created(uri).body(response);
     }
 
-    @PutMapping(value = "servers/{serverId}")
+    @PutMapping(value = "{serverId}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public ServerDTO update(@PathVariable String serverId, @RequestBody ServerDTO dto) {
         return serverService.update(serverId, dto);
     }
 
-    @DeleteMapping(value = "servers/{serverId}")
+    @DeleteMapping(value = "{serverId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String serverId) {
         serverService.delete(serverId);
     }
 
-    @GetMapping(value = "servers/{serverId}")
+    @GetMapping(value = "{serverId}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public ServerDTO findById(@PathVariable String serverId) {
         return serverService.findById(serverId);
     }
 
-    @GetMapping(value = "servers")
+    @GetMapping
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public List<ServerDTO> findAll() {
