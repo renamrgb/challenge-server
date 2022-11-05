@@ -68,4 +68,11 @@ public class ServerController {
     public List<ServerDTO> findAll() {
         return serverService.findAll();
     }
+
+    @GetMapping(value = "/available/{serverId}")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public String checkServerAvaliable(@PathVariable String serverId) {
+        return serverService.checkServer(serverId);
+    }
 }
