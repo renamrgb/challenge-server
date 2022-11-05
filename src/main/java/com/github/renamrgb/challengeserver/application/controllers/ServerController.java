@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -50,5 +51,12 @@ public class ServerController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String serverId) {
         serverService.delete(serverId);
+    }
+
+    @GetMapping(value = "server/{serverId}")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public ServerDTO findById(@PathVariable String serverId) {
+        return serverService.findById(serverId);
     }
 }
