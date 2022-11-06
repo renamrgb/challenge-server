@@ -5,14 +5,15 @@ import com.github.renamrgb.challengeserver.application.services.exceptions.Resou
 import com.github.renamrgb.challengeserver.domain.entities.Server;
 import com.github.renamrgb.challengeserver.infra.repositories.ServerRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityNotFoundException;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,12 +26,10 @@ public class ServerService {
 
     private final ServerRepository serverRepository;
     private final TranslateServer translateServer;
-    private final RestTemplate restTemplate;
 
-    public ServerService(ServerRepository serverRepository, TranslateServer translateServer, RestTemplate restTemplate) {
+    public ServerService(ServerRepository serverRepository, TranslateServer translateServer) {
         this.serverRepository = serverRepository;
         this.translateServer = translateServer;
-        this.restTemplate = restTemplate;
     }
 
     @Transactional
@@ -88,21 +87,32 @@ public class ServerService {
     }
 
     private Boolean isUp(Server entity) {
-        try {
-            String baseUrl = "http://"
-                    .concat(entity.getIp())
-                    .concat(":")
-                    .concat(String.valueOf(entity.getPort()));
-            URI uri = new URI(baseUrl);
+        String fullUri = getFullPathUri(entity);
 
-            ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
-            return true;
-        } catch (HttpClientErrorException e) {
-            System.out.println(e);
+        HttpRequest request = HttpRequest
+                .newBuilder()
+                .GET()
+                .timeout(Duration.ofSeconds(3))
+                .uri(URI.create(fullUri)).build();
+
+        HttpClient httpClient = HttpClient
+                .newBuilder()
+                .connectTimeout(Duration.ofSeconds(3))
+                .build();
+
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return true;
         } catch (Exception e) {
-           return false;
+            return false;
         }
+    }
+
+    private String getFullPathUri(Server entity) {
+        return "http://"
+                .concat(entity.getIp())
+                .concat(":")
+                .concat(String.valueOf(entity.getPort()));
     }
 
     private Server getExistByIdOrThrow(String serverId) {
