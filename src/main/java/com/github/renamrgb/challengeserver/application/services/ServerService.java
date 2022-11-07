@@ -1,9 +1,11 @@
 package com.github.renamrgb.challengeserver.application.services;
 
 import com.github.renamrgb.challengeserver.application.dtos.ServerDTO;
+import com.github.renamrgb.challengeserver.application.services.exceptions.BusinessException;
 import com.github.renamrgb.challengeserver.application.services.exceptions.ResourceNotfoundException;
 import com.github.renamrgb.challengeserver.domain.entities.Server;
 import com.github.renamrgb.challengeserver.infra.repositories.ServerRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +61,8 @@ public class ServerService {
             serverRepository.deleteById(uuid);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotfoundException(RESOURCE_NOT_FOUND);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException("Integridade violada");
         }
     }
 
@@ -101,7 +105,7 @@ public class ServerService {
                 .build();
 
         try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return true;
         } catch (Exception e) {
             return false;

@@ -8,8 +8,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -25,6 +28,9 @@ public class Server implements Serializable {
     private String name;
     private String ip;
     private Integer port;
+
+    @OneToMany(mappedBy="server")
+    private List<Video> videos = new ArrayList<>();
 
     public Server() {
     }
@@ -59,6 +65,10 @@ public class Server implements Serializable {
 
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public List<Video> getVideos() {
+        return videos;
     }
 
     @Override
